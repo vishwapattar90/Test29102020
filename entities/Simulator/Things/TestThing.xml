@@ -15,7 +15,7 @@
          enabled="true"
          homeMashup=""
          identifier=""
-         lastModifiedDate="2020-07-15T16:35:39.138Z"
+         lastModifiedDate="2020-10-29T10:01:33.927Z"
          name="TestThing"
          projectName="Simulator"
          published="false"
@@ -91,6 +91,25 @@
                                         SecondEntry.timestamp = new Date(); // DATETIME [Primary Key]
                                         result.AddRow(FirstEntry);
                                         result.AddRow(SecondEntry);
+                                        
+                                        //2. Create a variable that will store all the results 
+                                        var prevTestResult= Resources["InfoTableFunctions"].CreateInfoTableFromDataShape({
+                                            infoTableName : "InfoTable",
+                                            dataShapeName : "TestResultData"
+                                        });
+                                        
+                                        //3. Search all the services in the category Test and execute them.
+                                        //Each service accepts as an input the previous test results, and adds to that infotable its result
+                                        var iftbl_Tests =  me.GetServiceDefinitions({
+                                        	category: "Test" /* STRING */,
+                                        });
+                                        
+                                        for each (var test in iftbl_Tests.rows) {   
+                                            prevTestResult=me[test.name]({PreviousTestResults:prevTestResult});  
+                                        }
+                                        //4. delete test data
+                                        me.DeleteTestData();
+                                        result = prevTestResult;
                                         ]]>
                                         </code>
                                     </Row>
